@@ -68,8 +68,8 @@ func getStatus(code int) string {
 }
 
 // https://github.com/gin-gonic/gin/issues/1372
-func formatError(data interface{}) map[string]string {
-	errMsg := make(map[string]string)
+func formatError(data interface{}) map[string]interface{} {
+	errMsg := make(map[string]interface{})
 
 	switch it := data.(type) {
 	case validator.ValidationErrors:
@@ -82,7 +82,7 @@ func formatError(data interface{}) map[string]string {
 		errMsg["error"] = it.Error()
 	case merrors.MError:
 		errMsg["error"] = it.Error()
-		errMsg["code"] = string(it.Code)
+		errMsg["code"] = it.Code
 	}
 
 	return errMsg
