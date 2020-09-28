@@ -35,8 +35,8 @@ func (resp R) JSON() {
 		respJSON = Response{
 			Status:  getStatus(resp.StatusCode),
 			Message: resp.Message,
-			Data:    formatError(resp.Data),
-			Code:    resp.Code,
+			Data:    formatError(resp.Data,resp.Code),
+			Code:    resp.StatusCode,
 		}
 	} else {
 		respJSON = Response{
@@ -63,7 +63,7 @@ func getStatus(code int) string {
 }
 
 // https://github.com/gin-gonic/gin/issues/1372
-func formatError(data interface{}) map[string]string {
+func formatError(data interface{},code int) map[string]string {
 	errMsg := make(map[string]string)
 
 	switch it := data.(type) {
@@ -75,6 +75,7 @@ func formatError(data interface{}) map[string]string {
 		}
 	case error:
 		errMsg["error"] = it.Error()
+		errMsg["code"] = string(code)
 	}
 
 	return errMsg
