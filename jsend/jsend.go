@@ -78,7 +78,7 @@ func formatError(data interface{}) gin.H {
 			errMsg[jsonKey] = message
 		}
 	case *merrors.MError:
-		errMsg["error"] = it.Msg
+		errMsg["error"] = it.SMsg.Error()
 		errMsg["code"] = it.Code
 	case error:
 		errMsg["error"] = it.Error()
