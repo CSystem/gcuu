@@ -68,8 +68,8 @@ func getStatus(code int) string {
 }
 
 // https://github.com/gin-gonic/gin/issues/1372
-func formatError(data interface{}) map[string]interface{} {
-	errMsg := make(map[string]interface{})
+func formatError(data interface{}) gin.H {
+	errMsg := make(gin.H)
 
 	switch it := data.(type) {
 	case validator.ValidationErrors:
