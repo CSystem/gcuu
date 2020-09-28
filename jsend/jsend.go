@@ -3,9 +3,12 @@ package jsend
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/go-playground/validator.v8"
+	"github.com/CSystem/gcuu/merrors"
+
 )
 
 const (
@@ -35,7 +38,7 @@ func (resp R) JSON() {
 		respJSON = Response{
 			Status:  getStatus(resp.StatusCode),
 			Message: resp.Message,
-			Data:    formatError(resp.Data,resp.Code),
+			Data:    formatError(resp.Data),
 			Code:    resp.StatusCode,
 		}
 	} else {
@@ -46,6 +49,8 @@ func (resp R) JSON() {
 			Code:    resp.StatusCode,
 		}
 	}
+
+	respJSON.Data.(gin.H)["t"] = time.Now().Unix()
 
 	c.JSON(resp.StatusCode, respJSON)
 }
@@ -63,7 +68,7 @@ func getStatus(code int) string {
 }
 
 // https://github.com/gin-gonic/gin/issues/1372
-func formatError(data interface{},code int) map[string]string {
+func formatError(data interface{}) map[string]string {
 	errMsg := make(map[string]string)
 
 	switch it := data.(type) {
@@ -75,7 +80,9 @@ func formatError(data interface{},code int) map[string]string {
 		}
 	case error:
 		errMsg["error"] = it.Error()
-		errMsg["code"] = string(code)
+	case merrors.MError:
+		errMsg["error"] = it.Error()
+		errMsg["code"] = string(it.Code)
 	}
 
 	return errMsg
