@@ -1,14 +1,13 @@
 package jsend
 
 import (
+	"github.com/CSystem/gcuu/merrors"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/go-playground/validator.v8"
-	"github.com/CSystem/gcuu/merrors"
-
 )
 
 const (
@@ -78,11 +77,11 @@ func formatError(data interface{}) gin.H {
 			message := e.Tag
 			errMsg[jsonKey] = message
 		}
+	case merrors.MError:
+		errMsg["error"] = it.Msg
+		errMsg["code"] = it.Code
 	case error:
 		errMsg["error"] = it.Error()
-	case merrors.MError:
-		errMsg["error"] = it.Error()
-		errMsg["code"] = it.Code
 	}
 
 	return errMsg
